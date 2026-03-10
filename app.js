@@ -29,7 +29,7 @@ function obtenerDatos() {
     };
 }
 
-// 4. VER CÁLCULO
+// 4. VER CÁLCULO TEMPORAL
 function calcular() {
     const d = obtenerDatos();
     if (d.L <= 0 || d.A <= 0 || d.H <= 0) return alert("Ingresa medidas válidas.");
@@ -65,16 +65,16 @@ function añadirAlProyecto() {
     };
 
     listaElementos.push(nuevoElemento);
-    recalcularTotales();
+    recalcularTotales(); // Función corregida
 }
 
-// 6. ELIMINAR ELEMENTO
+// 6. FUNCIÓN PARA BORRAR (CORREGIDA)
 function eliminarElemento(id) {
     listaElementos = listaElementos.filter(e => e.id !== id);
-    recalcularTotales();
+    recalcularTotales(); // Función corregida
 }
 
-// 7. RECALCULAR
+// 7. RECALCULAR TOTALES
 function recalcularTotales() {
     totalesObra = { cemento: 0, arena: 0, piedra: 0, varillas: 0, alambre: 0 };
     listaElementos.forEach(e => {
@@ -97,36 +97,45 @@ function actualizarTablaProyecto() {
                 <tr style="background: #eee;">
                     <th style="border: 1px solid #000; padding: 5px;">Elemento</th>
                     <th style="border: 1px solid #000; padding: 5px;">Cem</th>
-                    <th style="border: 1px solid #000; padding: 5px;">X</th>
+                    <th style="border: 1px solid #000; padding: 5px;">Borrar</th>
                 </tr>
                 ${listaElementos.map(e => `
                     <tr>
                         <td style="border: 1px solid #000; padding: 5px; font-size:12px;">${e.nombre}</td>
                         <td style="border: 1px solid #000; padding: 5px; text-align:center;">${e.cem}</td>
                         <td style="border: 1px solid #000; padding: 5px; text-align:center;">
-                            <button onclick="eliminarElemento(${e.id})" style="background:#e74c3c; color:white; border:none; padding:2px 8px; cursor:pointer;">X</button>
+                            <button onclick="eliminarElemento(${e.id})" style="background:#e74c3c; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer;">X</button>
                         </td>
                     </tr>
                 `).join('')}
             </table>
-            <div style="font-weight: bold; border: 2px solid #000; padding: 10px; background: #f9f9f9;">
-                <p>✅ TOTAL CEMENTO: ${totalesObra.cemento} bultos</p>
-                <p>✅ TOTAL HIERRO: ${totalesObra.varillas} varillas</p>
-                <p>⏳ ARENA: ${totalesObra.arena.toFixed(2)} m³</p>
-                <p>⏳ PIEDRA: ${totalesObra.piedra.toFixed(2)} m³</p>
+            <div style="font-weight: bold; border: 2px solid #000; padding: 10px; background: #f9f9f9; font-size:13px;">
+                <p style="margin:2px 0;">✅ TOTAL CEMENTO: ${totalesObra.cemento} bultos</p>
+                <p style="margin:2px 0;">✅ TOTAL HIERRO (${diametro}"): ${totalesObra.varillas} varillas</p>
+                <p style="margin:2px 0;">⏳ TOTAL ARENA: ${totalesObra.arena.toFixed(2)} m³</p>
+                <p style="margin:2px 0;">⏳ TOTAL PIEDRA: ${totalesObra.piedra.toFixed(2)} m³</p>
+                <p style="margin:2px 0;">🧵 TOTAL ALAMBRE: ${totalesObra.alambre.toFixed(1)} kg</p>
             </div>
         </div>`;
     
     document.getElementById('contenedor-reporte').innerHTML = html;
-    const btnCont = document.getElementById('btn-container');
-    if (btnCont) btnCont.style.display = listaElementos.length > 0 ? "block" : "none";
+    document.getElementById('btn-container').style.display = listaElementos.length > 0 ? "block" : "none";
 }
 
 // 9. WHATSAPP
 function descargarPDF() {
-    if (listaElementos.length === 0) return alert("No hay datos.");
+    if (listaElementos.length === 0) return alert("❌ No hay datos.");
     const diametro = document.getElementById('diametro').value;
-    let mensaje = `*🏗️ CIVILPRO - REPORTE*%0A✅ *CEMENTO:* ${totalesObra.cemento} bultos%0A✅ *HIERRO:* ${totalesObra.varillas} varillas%0A⏳ *ARENA:* ${totalesObra.arena.toFixed(2)} m³%0A⏳ *PIEDRA:* ${totalesObra.piedra.toFixed(2)} m³`;
+    let mensaje = `*🏗️ CIVILPRO - REPORTE DE MATERIALES*%0A`;
+    mensaje += `*------------------------------------------*%0A`;
+    mensaje += `✅ *CEMENTO:* ${totalesObra.cemento} bultos%0A`;
+    mensaje += `✅ *HIERRO (${diametro}"):* ${totalesObra.varillas} varillas%0A`;
+    mensaje += `⏳ *ARENA:* ${totalesObra.arena.toFixed(2)} m³%0A`;
+    mensaje += `⏳ *PIEDRA:* ${totalesObra.piedra.toFixed(2)} m³%0A`;
+    mensaje += `🧵 *ALAMBRE:* ${totalesObra.alambre.toFixed(1)} kg%0A`;
+    mensaje += `*------------------------------------------*%0A`;
+    mensaje += `_Generado por CivilPro_`;
+
     window.open(`https://wa.me/?text=${mensaje}`, '_blank');
 }
 
