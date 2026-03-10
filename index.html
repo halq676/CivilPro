@@ -70,28 +70,32 @@
             </div>
 
             <div class="button-group">
-                <button onclick="calcular()" class="btn-main">CALCULAR MATERIALES</button>
-                <button onclick="limpiarFormulario()" class="btn-alt">Limpiar</button>
+                <button onclick="calcular()" class="btn-main">VER CÁLCULO</button>
+    
+                 <button onclick="limpiarProyecto()" class="btn-alt">Reiniciar Obra</button>
             </div>
         </section>
 
         <section id="contenedor-reporte"></section>
 
         <div id="btn-container" style="display: none; margin-top: 20px;">
-            <button id="btnPdf" onclick="descargarPDF()" class="btn-pdf">📥 DESCARGAR REPORTE PDF</button>
+            <button id="btnPdf" onclick="descargarPDF()" class="btn-pdf">📥 ENVIAR POR WHATSAPP</button>
         </div>
     </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script src="app.js"></script>
 
     <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('CivilPro listo para usar offline', reg))
-        .catch(err => console.log('Error al registrar SW', err));
-    });
-  }
-</script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('CivilPro listo para usar offline'))
+                    .catch(err => console.log('Error al registrar SW', err));
+            });
+        }
+    </script>
+
 </body>
 </html>
