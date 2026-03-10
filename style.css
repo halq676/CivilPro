@@ -1,80 +1,186 @@
-:root { --p: #27ae60; --s: #2c3e50; --bg: #f4f7f6; }
 
-body { background: var(--bg); font-family: 'Segoe UI', sans-serif; padding: 10px; }
-.container { max-width: 480px; margin: auto; }
-header { background: var(--s); color: white; padding: 15px; border-radius: 12px 12px 0 0; text-align: center; }
-.card { background: white; padding: 20px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-.input-group { margin-bottom: 12px; }
-label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.85rem; }
-input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-.grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-button { padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-.btn-main { background: var(--p); color: white; width: 100%; }
-.btn-alt { background: #eee; width: 100%; margin-top: 10px; }
-.btn-whatsapp { background: #25D366; color: white; width: 100%; font-size: 1.1rem; margin-top: 20px; }
-
-.card-resultado { background: #e8f5e9; padding: 15px; border-radius: 10px; border-left: 6px solid var(--p); margin-top: 15px; }
-
-/* --- REPORTE CON COLORES FUERTES --- */
-.reporte-box { 
-    background: white; 
-    padding: 20px; 
-    border: 2px solid var(--s); 
-    border-radius: 12px; 
-    margin-top: 20px;
+        :root { --p: #27ae60; --s: #2c3e50; --bg: #f4f7f6; }
+        body { background: var(--bg); font-family: 'Segoe UI', sans-serif; padding: 15px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 500px; }
+        header { background: var(--s); color: white; padding: 20px; border-radius: 15px 15px 0 0; text-align: center; }
+        header h1 { margin: 0; font-size: 1.6rem; }
+        .card { background: white; padding: 20px; border-radius: 0 0 15px 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.85rem; color: var(--s); }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
+        .btn-main { background: var(--p); color: white; padding: 16px; border: none; border-radius: 10px; width: 100%; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
+        
+        .item-calculado { background: #fff; border-left: 5px solid var(--p); padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 0.9rem; position: relative; }
+        .item-calculado h4 { margin: 0 0 5px 0; color: var(--s); text-transform: uppercase; }
+        .btn-borrar-item { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
+        
+        .reporte-consolidado { margin-top: 25px; background: #2c3e50; color: white; border-radius: 12px; overflow: hidden; }
+        .reporte-consolidado h3 { margin: 0; padding: 15px; text-align: center; background: #1a252f; }
+        .tabla-final { width: 100%; border-collapse: collapse; background: white; color: #333; }
+        .tabla-final td { padding: 12px; border-bottom: 1px solid #eee; }
+        .tabla-final td:last-child { text-align: right; font-weight: bold; color: var(--p); }
+        .btn-whatsapp { background: #25D366; color: white; width: 100%; padding: 15px; border: none; font-weight: bold; cursor: pointer; }
+    
+/* --- VARIABLES DE COLOR (Alto Contraste) --- */
+:root {
+    --primario: #27ae60;      /* Verde éxito */
+    --secundario: #2c3e50;    /* Azul profesional */
+    --fondo: #f4f7f6;         /* Gris claro de fondo */
+    --blanco: #ffffff;
+    --texto: #333333;
+    --peligro: #e74c3c;       /* Rojo para borrar */
+    
 }
 
-.reporte-box h3 {
-    background: var(--s);
-    color: white;
-    padding: 10px;
-    margin: -20px -20px 15px -20px;
-    border-radius: 10px 10px 0 0;
+/* --- ESTILOS BASE --- */
+body {
+    background-color: var(--fondo);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px; /* Tamaño ideal para móvil y laptop */
+}
+
+/* --- ENCABEZADO --- */
+header {
+    background: var(--secundario);
+    color: var(--blanco);
+    padding: 20px;
+    border-radius: 15px 15px 0 0;
     text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+header h1 { margin: 0; font-size: 1.6rem; }
+
+/* --- TARJETA PRINCIPAL --- */
+.card {
+    background: var(--blanco);
+    padding: 20px;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* --- ENTRADAS DE DATOS (INPUTS) --- */
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: var(--secundario);
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #dfe6e9;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box; /* Importante para que no se salga del borde */
+    transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primario);
+}
+
+/* Cuadrícula para ahorrar espacio */
+.grid-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+}
+
+/* --- BOTONES --- */
+button {
+    cursor: pointer;
+    font-weight: bold;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-main {
+    background-color: var(--primario);
+    color: white;
+    padding: 16px;
+    border-radius: 10px;
+    width: 100%;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
+}
+
+.btn-main:active { transform: scale(0.98); }
+
+.btn-alt {
+    background-color: #f1f2f6;
+    color: #57606f;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.btn-whatsapp {
+    background-color: #25D366;
+    color: white;
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
     font-size: 1rem;
 }
 
-.tabla-final { 
-    width: 100%; 
-    border-collapse: collapse; 
-    margin-bottom: 20px;
+/* --- TABLA DE RESULTADOS --- */
+.reporte-box {
+    margin-top: 25px;
+    background: white;
+    border: 2px solid var(--secundario);
+    border-radius: 12px;
+    overflow: hidden;
 }
 
-/* Filas con colores alternos fuertes */
-.tabla-final tr:nth-child(even) { background-color: #f1f2f6; }
-.tabla-final tr:nth-child(odd) { background-color: #ffffff; }
-
-.tabla-final td { 
-    padding: 12px 10px; 
-    border-bottom: 2px solid #dfe4ea;
-    color: #2f3640;
-    font-weight: 500;
+.reporte-box h3 {
+    background: var(--secundario);
+    color: white;
+    margin: 0;
+    padding: 12px;
+    text-align: center;
 }
 
-/* Columna de valores con fondo verde suave */
+.tabla-final {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-final td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
 .tabla-final td:last-child {
     text-align: right;
-    font-weight: 800;
-    color: #1b5e20;
-    background-color: #c8e6c9; /* Verde resaltado */
-    border-left: 2px solid #fff;
+    font-weight: bold;
+    color: var(--primario);
 }
 
-.item-pedido { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 10px; 
-    background: #dfe4ea; 
-    border-radius: 8px; 
-    margin-top: 8px; 
-    border-left: 5px solid #ff4757;
-}
+/* Zebra striping para la tabla */
+.tabla-final tr:nth-child(even) { background: #f9f9f9; }
 
-.btn-del { 
-    background: #ff4757; 
-    color: white; 
-    padding: 5px 10px; 
-    font-size: 0.7rem;
-    border-radius: 5px;
-}
