@@ -108,7 +108,7 @@ function renderizarTodo() {
 
         consolidadoDiv.innerHTML = `
             <div class="reporte-consolidado">
-                <h3>📋 TOTAL PARA FERRETERÍA</h3>
+                <h3>📋 REPORTE CONSOLIDADO</h3>
                 <table class="tabla-final">
                     <tr><td>Cemento Gris</td><td>${resumen.cemento} bultos</td></tr>
                     ${tablaHierros}
@@ -134,3 +134,4 @@ function enviarWA() {
 }
 
 window.onload = adaptarFormulario;
+
