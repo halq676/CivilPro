@@ -1,143 +1,113 @@
-// 1. VARIABLES GLOBALES
 let listaElementos = [];
-let totalesObra = { cemento: 0, arena: 0, piedra: 0, varillas: 0, alambre: 0 };
+let totalesObra = { cemento: 0, arena: 0, piedra: 0, varillasPrin: 0, varillasEst: 0, alambre: 0, totalEstribos: 0 };
 
-// 2. ADAPTAR FORMULARIO
 function adaptarFormulario() {
     const tipo = document.getElementById('tipoElemento').value;
-    const vBox = document.getElementById('opcionVarillas');
-    const sBox = document.getElementById('seccionSeparacion');
-    if (vBox && sBox) {
-        vBox.style.display = (tipo === "columna" || tipo === "viga") ? "block" : "none";
-        sBox.style.display = (tipo === "columna" || tipo === "viga") ? "none" : "block";
-    }
+    const isLosa = (tipo === "losa");
+    document.getElementById('opcionVarillas').style.display = isLosa ? "none" : "block";
+    document.getElementById('seccionEstribos').style.display = isLosa ? "none" : "block";
+    document.getElementById('seccionSeparacion').style.display = isLosa ? "block" : "none";
 }
 
-// 3. CAPTURAR DATOS
 function obtenerDatos() {
-    const leer = (id) => {
-        const el = document.getElementById(id);
-        return el ? parseFloat(el.value.replace(',', '.')) || 0 : 0;
-    };
+    const leer = (id) => parseFloat(document.getElementById(id).value.replace(',', '.')) || 0;
     return { 
         tipo: document.getElementById('tipoElemento').value,
         cant: parseInt(document.getElementById('cantidadElementos').value) || 1,
         nVarillas: parseInt(document.getElementById('numVarillas').value) || 4,
         diametro: document.getElementById('diametro').value,
         L: leer('largo'), A: leer('ancho'), H: leer('alto'), 
-        sep: leer('separacionMalla') 
+        sepMalla: leer('separacionMalla'),
+        sepEstribo: leer('separacionEstribo') || 0.20 
     };
 }
 
-// 4. VER CÁLCULO TEMPORAL
 function calcular() {
     const d = obtenerDatos();
-    if (d.L <= 0 || d.A <= 0 || d.H <= 0) return alert("Ingresa medidas válidas.");
-
-    const volTotal = (d.L * d.A * d.H) * d.cant;
-    const cem = Math.ceil(volTotal * 1.05 * 7.1); 
-    let metrosLong = (d.tipo === "columna" || d.tipo === "viga") ? (d.L * d.nVarillas) : (Math.ceil(d.L / d.sep) + 1) * d.A + (Math.ceil(d.A / d.sep) + 1) * d.L;
-    const varillas6m = Math.ceil(((metrosLong * d.cant) * 1.10) / 6);
+    if (d.L <= 0 || d.A <= 0 || d.H <= 0) return alert("⚠️ Ingresa medidas válidas.");
+    const vol = (d.L * d.A * d.H) * d.cant;
+    const cem = Math.ceil(vol * 7.1 * 1.05);
+    let est = (d.tipo !== "losa") ? Math.ceil(d.L / d.sepEstribo + 1) * d.cant : 0;
 
     document.getElementById('contenedor-reporte').innerHTML = `
-        <div class="card" style="border-left: 5px solid #27ae60; background: #f9f9f9; padding: 15px; margin-top:20px;">
-            <h4>Cálculo para ${d.cant} ${d.tipo}(s):</h4>
-            <p><strong>Cemento:</strong> ${cem} bultos | <strong>Hierro:</strong> ${varillas6m} varillas</p>
+        <div class="card-resultado">
+            <h4>Vista previa (${d.cant} ${d.tipo}s):</h4>
+            <p><b>Cemento:</b> ${cem} bultos</p>
+            ${est > 0 ? `<p><b>Estribos:</b> ${est} unidades</p>` : ''}
             <button onclick="añadirAlProyecto()" class="btn-main" style="width:100%; margin-top:10px;">➕ AÑADIR AL PEDIDO</button>
         </div>`;
 }
 
-// 5. AÑADIR AL PROYECTO
 function añadirAlProyecto() {
     const d = obtenerDatos();
     const vol = (d.L * d.A * d.H) * d.cant;
-    const cem = Math.ceil(vol * 1.05 * 7.1);
-    const are = parseFloat((vol * 1.05 * 0.56).toFixed(2));
-    const pie = parseFloat((vol * 1.05 * 0.84).toFixed(2));
-    let metrosLong = (d.tipo === "columna" || d.tipo === "viga") ? (d.L * d.nVarillas) : (Math.ceil(d.L / d.sep) + 1) * d.A + (Math.ceil(d.A / d.sep) + 1) * d.L;
-    const vars = Math.ceil(((metrosLong * d.cant) * 1.10) / 6);
-    const alam = parseFloat((vars * 0.3).toFixed(1));
+    const cem = Math.ceil(vol * 7.1 * 1.05);
+    const are = parseFloat((vol * 0.56 * 1.05).toFixed(2));
+    const pie = parseFloat((vol * 0.84 * 1.05).toFixed(2));
+    
+    let nEst = 0, mPrin = 0, mEst = 0;
+    if (d.tipo !== "losa") {
+        nEst = Math.ceil(d.L / d.sepEstribo + 1) * d.cant;
+        mPrin = (d.L * d.nVarillas) * d.cant;
+        let periEst = ((d.A + d.H) * 2 + 0.15); // Perímetro + ganchos
+        mEst = periEst * nEst;
+    } else {
+        mPrin = (((d.L / d.sepMalla) + 1) * d.A + ((d.A / d.sepMalla) + 1) * d.L) * d.cant;
+    }
+    
+    const vPrin = Math.ceil((mPrin * 1.10) / 6);
+    const vEst = Math.ceil((mEst * 1.10) / 6);
+    const alam = parseFloat(((vPrin + vEst) * 0.3).toFixed(1));
 
-    const nuevoElemento = { 
-        id: Date.now(), 
-        nombre: `${d.cant} ${d.tipo}(s) de ${d.L}x${d.A}`, 
-        cem, are, pie, vars, alam 
-    };
-
-    listaElementos.push(nuevoElemento);
-    recalcularTotales(); // Función corregida
+    listaElementos.push({ id: Date.now(), nombre: `${d.cant} ${d.tipo}(s)`, cem, are, pie, vPrin, vEst, alam, nEst });
+    actualizarTabla();
 }
 
-// 6. FUNCIÓN PARA BORRAR (CORREGIDA)
-function eliminarElemento(id) {
-    listaElementos = listaElementos.filter(e => e.id !== id);
-    recalcularTotales(); // Función corregida
-}
-
-// 7. RECALCULAR TOTALES
-function recalcularTotales() {
-    totalesObra = { cemento: 0, arena: 0, piedra: 0, varillas: 0, alambre: 0 };
+function actualizarTabla() {
+    totalesObra = { cemento: 0, arena: 0, piedra: 0, varillasPrin: 0, varillasEst: 0, alambre: 0, totalEstribos: 0 };
     listaElementos.forEach(e => {
-        totalesObra.cemento += e.cem;
-        totalesObra.arena += e.are;
-        totalesObra.piedra += e.pie;
-        totalesObra.varillas += e.vars;
-        totalesObra.alambre += e.alam;
+        totalesObra.cemento += e.cem; totalesObra.arena += e.are; totalesObra.piedra += e.pie;
+        totalesObra.varillasPrin += e.vPrin; totalesObra.varillasEst += e.vEst;
+        totalesObra.alambre += e.alam; totalesObra.totalEstribos += e.nEst;
     });
-    actualizarTablaProyecto();
-}
 
-// 8. ACTUALIZAR TABLA VISIBLE
-function actualizarTablaProyecto() {
-    const diametro = document.getElementById('diametro').value;
+    const diam = document.getElementById('diametro').value;
     let html = `
-        <div id="area-pdf" style="padding: 15px; background: white; color: black; border: 2px solid #333; margin-top:20px;">
-            <h3 style="text-align: center;">REPORTE DE MATERIALES</h3>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                <tr style="background: #eee;">
-                    <th style="border: 1px solid #000; padding: 5px;">Elemento</th>
-                    <th style="border: 1px solid #000; padding: 5px;">Cem</th>
-                    <th style="border: 1px solid #000; padding: 5px;">Borrar</th>
-                </tr>
-                ${listaElementos.map(e => `
-                    <tr>
-                        <td style="border: 1px solid #000; padding: 5px; font-size:12px;">${e.nombre}</td>
-                        <td style="border: 1px solid #000; padding: 5px; text-align:center;">${e.cem}</td>
-                        <td style="border: 1px solid #000; padding: 5px; text-align:center;">
-                            <button onclick="eliminarElemento(${e.id})" style="background:#e74c3c; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer;">X</button>
-                        </td>
-                    </tr>
-                `).join('')}
+        <div class="reporte-box">
+            <h3>📋 PEDIDO DE MATERIALES</h3>
+            <table class="tabla-final">
+                <tr><td><b>Cemento Gris</b></td><td>${totalesObra.cemento} bultos</td></tr>
+                <tr><td><b>Hierro Principal (${diam})</b></td><td>${totalesObra.varillasPrin} vars</td></tr>
+                ${totalesObra.varillasEst > 0 ? `<tr><td><b>Hierro Estribo (1/4")</b></td><td>${totalesObra.varillasEst} vars</td></tr>` : ''}
+                ${totalesObra.totalEstribos > 0 ? `<tr><td><b>Total Estribos</b></td><td>${totalesObra.totalEstribos} und</td></tr>` : ''}
+                <tr><td><b>Arena</b></td><td>${totalesObra.arena.toFixed(2)} m³</td></tr>
+                <tr><td><b>Piedra</b></td><td>${totalesObra.piedra.toFixed(2)} m³</td></tr>
+                <tr><td><b>Alambre Negro</b></td><td>${totalesObra.alambre.toFixed(1)} kg</td></tr>
             </table>
-            <div style="font-weight: bold; border: 2px solid #000; padding: 10px; background: #f9f9f9; font-size:13px;">
-                <p style="margin:2px 0;">✅ TOTAL CEMENTO: ${totalesObra.cemento} bultos</p>
-                <p style="margin:2px 0;">✅ TOTAL HIERRO (${diametro}"): ${totalesObra.varillas} varillas</p>
-                <p style="margin:2px 0;">⏳ TOTAL ARENA: ${totalesObra.arena.toFixed(2)} m³</p>
-                <p style="margin:2px 0;">⏳ TOTAL PIEDRA: ${totalesObra.piedra.toFixed(2)} m³</p>
-                <p style="margin:2px 0;">🧵 TOTAL ALAMBRE: ${totalesObra.alambre.toFixed(1)} kg</p>
+            <div class="detalle-lista">
+                ${listaElementos.map(e => `
+                    <div class="item-pedido">
+                        <span>• ${e.nombre}</span>
+                        <button class="btn-del" onclick="borrar(${e.id})">BORRAR</button>
+                    </div>`).join('')}
             </div>
         </div>`;
-    
     document.getElementById('contenedor-reporte').innerHTML = html;
-    document.getElementById('btn-container').style.display = listaElementos.length > 0 ? "block" : "none";
+    document.getElementById('btn-container').style.display = "block";
 }
 
-// 9. WHATSAPP
-function descargarPDF() {
-    if (listaElementos.length === 0) return alert("❌ No hay datos.");
-    const diametro = document.getElementById('diametro').value;
-    let mensaje = `*🏗️ CIVILPRO - REPORTE DE MATERIALES*%0A`;
-    mensaje += `*------------------------------------------*%0A`;
-    mensaje += `✅ *CEMENTO:* ${totalesObra.cemento} bultos%0A`;
-    mensaje += `✅ *HIERRO (${diametro}"):* ${totalesObra.varillas} varillas%0A`;
-    mensaje += `⏳ *ARENA:* ${totalesObra.arena.toFixed(2)} m³%0A`;
-    mensaje += `⏳ *PIEDRA:* ${totalesObra.piedra.toFixed(2)} m³%0A`;
-    mensaje += `🧵 *ALAMBRE:* ${totalesObra.alambre.toFixed(1)} kg%0A`;
-    mensaje += `*------------------------------------------*%0A`;
-    mensaje += `_Generado por CivilPro_`;
-
-    window.open(`https://wa.me/?text=${mensaje}`, '_blank');
+function borrar(id) {
+    listaElementos = listaElementos.filter(e => e.id !== id);
+    actualizarTabla();
 }
 
-function limpiarProyecto() { if (confirm("¿Borrar todo?")) location.reload(); }
+function enviarWhatsApp() {
+    const d = document.getElementById('diametro').value;
+    let msj = `*🏗️ CIVILPRO - PEDIDO*%0A*Cemento:* ${totalesObra.cemento} bultos%0A*Hierro ${d}:* ${totalesObra.varillasPrin} vars%0A`;
+    if(totalesObra.varillasEst > 0) msj += `*Hierro 1/4 (Estribos):* ${totalesObra.varillasEst} vars%0A*Total Estribos:* ${totalesObra.totalEstribos} und%0A`;
+    msj += `*Arena:* ${totalesObra.arena.toFixed(2)} m³%0A*Piedra:* ${totalesObra.piedra.toFixed(2)} m³%0A*Alambre:* ${totalesObra.alambre.toFixed(1)} kg`;
+    window.open(`https://wa.me/?text=${msj}`, '_blank');
+}
+
+function limpiarProyecto() { if(confirm("¿Borrar todo?")) location.reload(); }
 window.onload = adaptarFormulario;
