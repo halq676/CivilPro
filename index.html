@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivilPro v1.0</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icono-192.png">
+    <link rel="apple-touch-icon" href="icono-192.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
+</head>
+<body>
+    <header>
+        <h1>CivilPro 🏗️</h1>
+        <p>Software de Ingeniería y Despiece</p>
+    </header>
+
+    <main>
+        <section class="card selector-card">
+            <label class="main-label">ELEMENTO A CALCULAR:</label>
+            <select id="tipoElemento" onchange="adaptarFormulario()">
+                <option value="columna">Columna (Vertical)</option>
+                <option value="viga">Viga (Horizontal)</option>
+                <option value="plancha">Plancha / Losa</option>
+                <option value="zapata">Zapata</option>
+            </select>
+        </section>
+
+        <section class="card">
+            <h3>1. Medidas y Cantidad</h3>
+            <div class="input-group">
+                <label id="labelLargo">Largo / Altura (m):</label>
+                <input type="text" id="largo" placeholder="0.00">
+            </div>
+            <div class="input-group">
+                <label id="labelAncho">Ancho / Base (m):</label>
+                <input type="text" id="ancho" placeholder="0.00">
+            </div>
+            <div class="input-group">
+                <label id="labelAlto">Espesor / Fondo (m):</label>
+                <input type="text" id="alto" placeholder="0.00">
+            </div>
+            <div class="input-group qty-box">
+                <label>¿Cuántos elementos iguales son?</label>
+                <input type="number" id="cantidadElementos" value="1" min="1">
+            </div>
+
+            <hr>
+            <h3>2. Refuerzo de Acero</h3>
+            <div class="input-group">
+                <label>Diámetro Varilla (Ø):</label>
+                <select id="diametro">
+                    <option value="1/2">1/2" (6m)</option>
+                    <option value="3/8">3/8" (6m)</option>
+                    <option value="5/8">5/8" (6m)</option>
+                </select>
+            </div>
+
+            <div id="opcionVarillas" class="input-group">
+                <label>¿Cuántas varillas longitudinales?</label>
+                <input type="number" id="numVarillas" value="4" min="1">
+            </div>
+
+            <div id="seccionSeparacion" class="input-group" style="display:none;">
+                <label>Separación de la Malla (m):</label>
+                <input type="text" id="separacionMalla" value="0.20" placeholder="Ej: 0.15">
+            </div>
+
+            <div class="button-group">
+                <button onclick="calcular()" class="btn-main">CALCULAR MATERIALES</button>
+                <button onclick="limpiarFormulario()" class="btn-alt">Limpiar</button>
+            </div>
+        </section>
+
+        <section id="contenedor-reporte"></section>
+
+        <div id="btn-container" style="display: none; margin-top: 20px;">
+            <button id="btnPdf" onclick="descargarPDF()" class="btn-pdf">📥 DESCARGAR REPORTE PDF</button>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('CivilPro listo para usar offline', reg))
+        .catch(err => console.log('Error al registrar SW', err));
+    });
+  }
+</script>
+</body>
+</html>

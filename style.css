@@ -1,0 +1,16 @@
+body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
+header { text-align: center; color: #007bff; }
+main { max-width: 500px; margin: auto; }
+
+.card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+.qty-box { background: #fff9e6; padding: 10px; border-radius: 8px; border: 1px solid #ffe082; }
+
+label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px; color: #444; }
+input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+
+.button-group { display: flex; gap: 15px; margin-top: 25px; }
+.btn-main { flex: 2; background: #27ae60; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.btn-alt { flex: 1; background: transparent; color: #666; border: 2px solid #ddd; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+.btn-alt:hover { border-color: #dc3545; color: #dc3545; }
+
+.btn-pdf { width: 100%; background: #e74c3c; color: white; border: none; padding: 18px; border-radius: 10px; font-weight: bold; cursor: pointer; }
