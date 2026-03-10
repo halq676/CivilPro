@@ -134,4 +134,3 @@ function enviarWA() {
 }
 
 window.onload = adaptarFormulario;
-
