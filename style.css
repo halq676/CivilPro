@@ -1,129 +1,80 @@
-body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
-header { text-align: center; color: #007bff; }
-main { max-width: 500px; margin: auto; }
+:root { --p: #27ae60; --s: #2c3e50; --bg: #f4f7f6; }
 
-.card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
-.qty-box { background: #fff9e6; padding: 10px; border-radius: 8px; border: 1px solid #ffe082; }
+body { background: var(--bg); font-family: 'Segoe UI', sans-serif; padding: 10px; }
+.container { max-width: 480px; margin: auto; }
+header { background: var(--s); color: white; padding: 15px; border-radius: 12px 12px 0 0; text-align: center; }
+.card { background: white; padding: 20px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+.input-group { margin-bottom: 12px; }
+label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.85rem; }
+input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+.grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+button { padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.btn-main { background: var(--p); color: white; width: 100%; }
+.btn-alt { background: #eee; width: 100%; margin-top: 10px; }
+.btn-whatsapp { background: #25D366; color: white; width: 100%; font-size: 1.1rem; margin-top: 20px; }
 
-label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px; color: #444; }
-input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+.card-resultado { background: #e8f5e9; padding: 15px; border-radius: 10px; border-left: 6px solid var(--p); margin-top: 15px; }
 
-.button-group { display: flex; gap: 15px; margin-top: 25px; }
-.btn-main { flex: 2; background: #27ae60; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-.btn-alt { flex: 1; background: transparent; color: #666; border: 2px solid #ddd; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-.btn-alt:hover { border-color: #dc3545; color: #dc3545; }
-
-.btn-pdf { width: 100%; background: #e74c3c; color: white; border: none; padding: 18px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-
-.btn-alt {
-    flex: 1;
-    background: #f8d7da; /* Color rojizo suave */
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    padding: 15px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
+/* --- REPORTE CON COLORES FUERTES --- */
+.reporte-box { 
+    background: white; 
+    padding: 20px; 
+    border: 2px solid var(--s); 
+    border-radius: 12px; 
+    margin-top: 20px;
 }
 
-.btn-alt:hover {
-    background: #dc3545; /* Rojo fuerte al pasar el mouse */
+.reporte-box h3 {
+    background: var(--s);
     color: white;
+    padding: 10px;
+    margin: -20px -20px 15px -20px;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+    font-size: 1rem;
 }
 
-/* Esto asegura que la tabla sea visible para el motor del PDF */
-#area-pdf {
-    background-color: white !important;
-    color: black !important;
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
+.tabla-final { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-bottom: 20px;
 }
 
-#area-pdf * {
-    color: black !important;
-}
-/* Ajuste para evitar recortes en el PDF */
-#contenedor-reporte {
-    width: 100%;
-    overflow: visible;
-}
+/* Filas con colores alternos fuertes */
+.tabla-final tr:nth-child(even) { background-color: #f1f2f6; }
+.tabla-final tr:nth-child(odd) { background-color: #ffffff; }
 
-/* Forzar que las tablas tengan bordes visibles en el PDF */
-#area-pdf table {
-    border-collapse: collapse !important;
-    width: 100% !important;
+.tabla-final td { 
+    padding: 12px 10px; 
+    border-bottom: 2px solid #dfe4ea;
+    color: #2f3640;
+    font-weight: 500;
 }
 
-#area-pdf th, #area-pdf td {
-    border: 1px solid #333 !important;
-    padding: 8px !important;
+/* Columna de valores con fondo verde suave */
+.tabla-final td:last-child {
+    text-align: right;
+    font-weight: 800;
+    color: #1b5e20;
+    background-color: #c8e6c9; /* Verde resaltado */
+    border-left: 2px solid #fff;
 }
 
-/* CONFIGURACIÓN PARA IMPRESIÓN / PDF NATIVO */
-@media print {
-    /* Ocultamos todo lo que NO es el reporte */
-    body { 
-        background: white !important; 
-        padding: 0 !important; 
-    }
-    
-    header, main, .card:not(#contenedor-reporte), .button-group, #btn-container, .btn-main, .btn-alt {
-        display: none !important;
-    }
-
-    /* Forzamos que el reporte se vea a pantalla completa en la hoja */
-    #contenedor-reporte {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: block !important;
-    }
-
-    #area-pdf {
-        box-shadow: none !important;
-        border: none !important;
-        width: 100% !important;
-        padding: 0 !important;
-    }
-
-    /* Aseguramos que las tablas se vean con líneas negras fuertes */
-    table {
-        border: 2px solid black !important;
-        width: 100% !important;
-    }
-    
-    th, td {
-        border: 1px solid black !important;
-        color: black !important;
-    }
+.item-pedido { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px; 
+    background: #dfe4ea; 
+    border-radius: 8px; 
+    margin-top: 8px; 
+    border-left: 5px solid #ff4757;
 }
 
-@media print {
-    /* Ocultamos todo menos el reporte */
-    header, main, .button-group, #btn-container, .card:not(#contenedor-reporte), .btn-main, .btn-alt {
-        display: none !important;
-    }
-
-    body {
-        background: white !important;
-    }
-
-    #contenedor-reporte, #area-pdf {
-        display: block !important;
-        width: 100% !important;
-        color: black !important;
-    }
-
-    table {
-        border: 2px solid black !important;
-        width: 100% !important;
-    }
-
-    th, td {
-        border: 1px solid black !important;
-    }
+.btn-del { 
+    background: #ff4757; 
+    color: white; 
+    padding: 5px 10px; 
+    font-size: 0.7rem;
+    border-radius: 5px;
 }
