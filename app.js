@@ -1,113 +1,136 @@
-let listaElementos = [];
-let totalesObra = { cemento: 0, arena: 0, piedra: 0, varillasPrin: 0, varillasEst: 0, alambre: 0, totalEstribos: 0 };
+let listaCalculos = [];
 
 function adaptarFormulario() {
     const tipo = document.getElementById('tipoElemento').value;
-    const isLosa = (tipo === "losa");
-    document.getElementById('opcionVarillas').style.display = isLosa ? "none" : "block";
-    document.getElementById('seccionEstribos').style.display = isLosa ? "none" : "block";
-    document.getElementById('seccionSeparacion').style.display = isLosa ? "block" : "none";
-}
-
-function obtenerDatos() {
-    const leer = (id) => parseFloat(document.getElementById(id).value.replace(',', '.')) || 0;
-    return { 
-        tipo: document.getElementById('tipoElemento').value,
-        cant: parseInt(document.getElementById('cantidadElementos').value) || 1,
-        nVarillas: parseInt(document.getElementById('numVarillas').value) || 4,
-        diametro: document.getElementById('diametro').value,
-        L: leer('largo'), A: leer('ancho'), H: leer('alto'), 
-        sepMalla: leer('separacionMalla'),
-        sepEstribo: leer('separacionEstribo') || 0.20 
-    };
+    const esPared = (tipo === 'Pared');
+    document.getElementById('seccion-hierro').style.display = esPared ? 'none' : 'block';
+    document.getElementById('contenedor-ancho').style.display = esPared ? 'none' : 'block';
+    document.getElementById('grupo-ladrillo').style.display = esPared ? 'block' : 'none';
 }
 
 function calcular() {
-    const d = obtenerDatos();
-    if (d.L <= 0 || d.A <= 0 || d.H <= 0) return alert("⚠️ Ingresa medidas válidas.");
-    const vol = (d.L * d.A * d.H) * d.cant;
-    const cem = Math.ceil(vol * 7.1 * 1.05);
-    let est = (d.tipo !== "losa") ? Math.ceil(d.L / d.sepEstribo + 1) * d.cant : 0;
+    const tipo = document.getElementById('tipoElemento').value;
+    const cant = parseFloat(document.getElementById('cantidad').value) || 0;
+    const L = parseFloat(document.getElementById('largo').value) || 0;
+    const A = parseFloat(document.getElementById('ancho').value) || 0;
+    const H = parseFloat(document.getElementById('alto').value) || 0;
 
-    document.getElementById('contenedor-reporte').innerHTML = `
-        <div class="card-resultado">
-            <h4>Vista previa (${d.cant} ${d.tipo}s):</h4>
-            <p><b>Cemento:</b> ${cem} bultos</p>
-            ${est > 0 ? `<p><b>Estribos:</b> ${est} unidades</p>` : ''}
-            <button onclick="añadirAlProyecto()" class="btn-main" style="width:100%; margin-top:10px;">➕ AÑADIR AL PEDIDO</button>
-        </div>`;
-}
+    let nuevoItem = {
+        id: Date.now(),
+        nombre: `${tipo} (${cant} und)`,
+        cemento: 0, arena: 0, piedra: 0, varPrin: 0, dP: "", varEst: 0, dE: "", alambre: 0, ladrillos: 0, ladrilloTipo: ""
+    };
 
-function añadirAlProyecto() {
-    const d = obtenerDatos();
-    const vol = (d.L * d.A * d.H) * d.cant;
-    const cem = Math.ceil(vol * 7.1 * 1.05);
-    const are = parseFloat((vol * 0.56 * 1.05).toFixed(2));
-    const pie = parseFloat((vol * 0.84 * 1.05).toFixed(2));
-    
-    let nEst = 0, mPrin = 0, mEst = 0;
-    if (d.tipo !== "losa") {
-        nEst = Math.ceil(d.L / d.sepEstribo + 1) * d.cant;
-        mPrin = (d.L * d.nVarillas) * d.cant;
-        let periEst = ((d.A + d.H) * 2 + 0.15); // Perímetro + ganchos
-        mEst = periEst * nEst;
+    if (tipo === 'Pared') {
+        const area = L * H * cant;
+        const clase = document.getElementById('claseLadrillo').value;
+        nuevoItem.ladrilloTipo = clase === 'farol' ? "Farol" : "Sólido";
+        nuevoItem.ladrillos = Math.ceil(area * (clase === 'farol' ? 16 : 38) * 1.05);
     } else {
-        mPrin = (((d.L / d.sepMalla) + 1) * d.A + ((d.A / d.sepMalla) + 1) * d.L) * d.cant;
-    }
-    
-    const vPrin = Math.ceil((mPrin * 1.10) / 6);
-    const vEst = Math.ceil((mEst * 1.10) / 6);
-    const alam = parseFloat(((vPrin + vEst) * 0.3).toFixed(1));
+        const vol = L * A * H * cant;
+        nuevoItem.cemento = Math.ceil(vol * 8.5); 
+        nuevoItem.arena = parseFloat((vol * 0.52).toFixed(2));
+        nuevoItem.piedra = parseFloat((vol * 0.65).toFixed(2));
 
-    listaElementos.push({ id: Date.now(), nombre: `${d.cant} ${d.tipo}(s)`, cem, are, pie, vPrin, vEst, alam, nEst });
-    actualizarTabla();
+        const dP = document.getElementById('diametro').value;
+        const vP = parseFloat(document.getElementById('varillasCant').value) || 0;
+        const mP = L * vP * cant;
+        nuevoItem.varPrin = Math.ceil(mP / 6);
+        nuevoItem.dP = dP;
+
+        const dE = document.getElementById('diametroEstribo').value;
+        const sep = parseFloat(document.getElementById('separacion').value) || 0;
+        let mE = 0;
+        if (sep > 0) {
+            const nEst = (Math.floor(L / sep) + 1) * cant;
+            const longEst = (tipo === 'Losa') ? (A * 1.05) : ((A + H) * 2 + 0.15);
+            mE = nEst * longEst;
+            nuevoItem.varEst = Math.ceil(mE / 6);
+            nuevoItem.dE = dE;
+        }
+        nuevoItem.alambre = parseFloat(((mP + mE) * 0.04).toFixed(1));
+    }
+
+    listaCalculos.push(nuevoItem);
+    renderizarTodo();
 }
 
-function actualizarTabla() {
-    totalesObra = { cemento: 0, arena: 0, piedra: 0, varillasPrin: 0, varillasEst: 0, alambre: 0, totalEstribos: 0 };
-    listaElementos.forEach(e => {
-        totalesObra.cemento += e.cem; totalesObra.arena += e.are; totalesObra.piedra += e.pie;
-        totalesObra.varillasPrin += e.vPrin; totalesObra.varillasEst += e.vEst;
-        totalesObra.alambre += e.alam; totalesObra.totalEstribos += e.nEst;
+function eliminarItem(id) {
+    listaCalculos = listaCalculos.filter(item => item.id !== id);
+    renderizarTodo();
+}
+
+function renderizarTodo() {
+    const historialDiv = document.getElementById('historial-categorias');
+    const consolidadoDiv = document.getElementById('contenedor-consolidado');
+    historialDiv.innerHTML = "";
+    
+    // Objeto para acumular materiales por tipo
+    let resumen = {
+        cemento: 0, arena: 0, piedra: 0, alambre: 0, ladrillos: 0,
+        hierros: {} // Aquí guardaremos: {"1/2": 10, "1/4": 5}
+    };
+
+    listaCalculos.forEach(item => {
+        resumen.cemento += item.cemento;
+        resumen.arena += item.arena;
+        resumen.piedra += item.piedra;
+        resumen.alambre += item.alambre;
+        resumen.ladrillos += item.ladrillos;
+
+        // Sumar hierro principal al diámetro correspondiente
+        if(item.varPrin > 0) {
+            resumen.hierros[item.dP] = (resumen.hierros[item.dP] || 0) + item.varPrin;
+        }
+        // Sumar estribos al diámetro correspondiente
+        if(item.varEst > 0) {
+            resumen.hierros[item.dE] = (resumen.hierros[item.dE] || 0) + item.varEst;
+        }
+
+        historialDiv.innerHTML += `
+            <div class="item-calculado">
+                <button class="btn-borrar-item" onclick="eliminarItem(${item.id})">×</button>
+                <h4>${item.nombre}</h4>
+                <p>
+                    ${item.cemento > 0 ? `Cem: ${item.cemento} bul | ` : ''}
+                    ${item.varPrin > 0 ? `Prin: ${item.varPrin} de ${item.dP} | ` : ''}
+                    ${item.varEst > 0 ? `Est: ${item.varEst} de ${item.dE} | ` : ''}
+                    ${item.ladrillos > 0 ? `Ladrillo: ${item.ladrillos} ${item.ladrilloTipo}` : ''}
+                </p>
+            </div>`;
     });
 
-    const diam = document.getElementById('diametro').value;
-    let html = `
-        <div class="reporte-box">
-            <h3>📋 PEDIDO DE MATERIALES</h3>
-            <table class="tabla-final">
-                <tr><td><b>Cemento Gris</b></td><td>${totalesObra.cemento} bultos</td></tr>
-                <tr><td><b>Hierro Principal (${diam})</b></td><td>${totalesObra.varillasPrin} vars</td></tr>
-                ${totalesObra.varillasEst > 0 ? `<tr><td><b>Hierro Estribo (1/4")</b></td><td>${totalesObra.varillasEst} vars</td></tr>` : ''}
-                ${totalesObra.totalEstribos > 0 ? `<tr><td><b>Total Estribos</b></td><td>${totalesObra.totalEstribos} und</td></tr>` : ''}
-                <tr><td><b>Arena</b></td><td>${totalesObra.arena.toFixed(2)} m³</td></tr>
-                <tr><td><b>Piedra</b></td><td>${totalesObra.piedra.toFixed(2)} m³</td></tr>
-                <tr><td><b>Alambre Negro</b></td><td>${totalesObra.alambre.toFixed(1)} kg</td></tr>
-            </table>
-            <div class="detalle-lista">
-                ${listaElementos.map(e => `
-                    <div class="item-pedido">
-                        <span>• ${e.nombre}</span>
-                        <button class="btn-del" onclick="borrar(${e.id})">BORRAR</button>
-                    </div>`).join('')}
-            </div>
-        </div>`;
-    document.getElementById('contenedor-reporte').innerHTML = html;
-    document.getElementById('btn-container').style.display = "block";
+    if (listaCalculos.length > 0) {
+        let tablaHierros = "";
+        for (let diametro in resumen.hierros) {
+            tablaHierros += `<tr><td>Hierro de ${diametro}</td><td>${resumen.hierros[diametro]} vars</td></tr>`;
+        }
+
+        consolidadoDiv.innerHTML = `
+            <div class="reporte-consolidado">
+                <h3>📋 TOTAL PARA FERRETERÍA</h3>
+                <table class="tabla-final">
+                    <tr><td>Cemento Gris</td><td>${resumen.cemento} bultos</td></tr>
+                    ${tablaHierros}
+                    <tr><td>Alambre Negro</td><td>${resumen.alambre.toFixed(1)} kg</td></tr>
+                    <tr><td>Arena</td><td>${resumen.arena.toFixed(2)} m³</td></tr>
+                    <tr><td>Piedra / Triturado</td><td>${resumen.piedra.toFixed(2)} m³</td></tr>
+                    ${resumen.ladrillos > 0 ? `<tr><td>Total Ladrillos</td><td>${resumen.ladrillos} und</td></tr>` : ''}
+                </table>
+                <button class="btn-whatsapp" onclick="enviarWA()">Enviar Pedido Total</button>
+            </div>`;
+    } else {
+        consolidadoDiv.innerHTML = "";
+    }
 }
 
-function borrar(id) {
-    listaElementos = listaElementos.filter(e => e.id !== id);
-    actualizarTabla();
-}
-
-function enviarWhatsApp() {
-    const d = document.getElementById('diametro').value;
-    let msj = `*🏗️ CIVILPRO - PEDIDO*%0A*Cemento:* ${totalesObra.cemento} bultos%0A*Hierro ${d}:* ${totalesObra.varillasPrin} vars%0A`;
-    if(totalesObra.varillasEst > 0) msj += `*Hierro 1/4 (Estribos):* ${totalesObra.varillasEst} vars%0A*Total Estribos:* ${totalesObra.totalEstribos} und%0A`;
-    msj += `*Arena:* ${totalesObra.arena.toFixed(2)} m³%0A*Piedra:* ${totalesObra.piedra.toFixed(2)} m³%0A*Alambre:* ${totalesObra.alambre.toFixed(1)} kg`;
+function enviarWA() {
+    // Generar mensaje automático
+    let msj = "*PEDIDO CIVILPRO - TOTAL*%0A";
+    listaCalculos.forEach(item => {
+        msj += `-%20${item.nombre}%0A`;
+    });
     window.open(`https://wa.me/?text=${msj}`, '_blank');
 }
 
-function limpiarProyecto() { if(confirm("¿Borrar todo?")) location.reload(); }
 window.onload = adaptarFormulario;
