@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CivilPro v1.0 </title>
-    <link rel="manifest" href="manifest.json">
+    <title>CivilPro v1.0</title>
+     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#27ae60">
     <link rel="icon" type="image/png" sizes="192x192" href="icono-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icono-512.png">
@@ -15,64 +15,66 @@
 <body>
     <div class="container">
         <header>
-            <h1>🏗️ CIVILPRO v1.0</h1>
-            <p>Software de Cálculo de Materiales</p>
+            <h1>🏗️ CivilPro</h1>
+            <p>Cálculo de Materiales</p>
         </header>
 
         <main class="card">
             <div class="input-group">
-                <label>Tipo de Elemento:</label>
+                <label>Elemento:</label>
                 <select id="tipoElemento" onchange="adaptarFormulario()">
-                    <option value="columna">Columna</option>
-                    <option value="viga">Viga</option>
-                    <option value="losa">Losa / Placa</option>
+                    <option value="Columna">Columna</option>
+                    <option value="Viga">Viga</option>
+                    <option value="Losa">Losa / Placa</option>
+                    <option value="Zapata">Zapata</option>
+                    <option value="Pared">Muro / Pared</option>
+                </select>
+            </div>
+
+            <div id="grupo-ladrillo" class="input-group" style="display:none;">
+                <label>Clase de Ladrillo:</label>
+                <select id="claseLadrillo">
+                    <option value="farol">Ladrillo Farol (16/m2)</option>
+                    <option value="solido">Ladrillo Sólido (38/m2)</option>
                 </select>
             </div>
 
             <div class="grid-inputs">
-                <div class="input-group"><label>Cantidad:</label><input type="number" id="cantidadElementos" value="1"></div>
-                <div class="input-group"><label>Largo (m):</label><input type="number" id="largo" step="0.01" placeholder="0.00"></div>
+                <div class="input-group"><label id="labelLargo">Largo (m):</label><input type="number" id="largo" step="0.01"></div>
+                <div class="input-group" id="contenedor-ancho"><label id="labelAncho">Ancho (m):</label><input type="number" id="ancho" step="0.01"></div>
+                <div class="input-group"><label id="labelAlto">Alto (m):</label><input type="number" id="alto" step="0.01"></div>
+                <div class="input-group"><label>Cantidad:</label><input type="number" id="cantidad" value="1"></div>
             </div>
 
-            <div class="grid-inputs">
-                <div class="input-group"><label>Ancho (m):</label><input type="number" id="ancho" step="0.01" placeholder="0.00"></div>
-                <div class="input-group"><label>Alto/Base (m):</label><input type="number" id="alto" step="0.01" placeholder="0.00"></div>
-            </div>
-
-            <div id="opcionVarillas">
-                <div class="input-group"><label>Varillas Principales (Cant):</label><input type="number" id="numVarillas" value="4"></div>
-                <div class="input-group">
-                    <label>Diámetro Varilla Principal:</label>
-                    <select id="diametro">
-                        <option value='3/8"'>3/8"</option>
-                        <option value='1/2"' selected>1/2"</option>
-                        <option value='5/8"'>5/8"</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="seccionEstribos">
+            <div id="seccion-hierro">
+                <hr>
                 <div class="grid-inputs">
-                    <div class="input-group"><label>Separación (m):</label><input type="number" id="separacionEstribo" step="0.01" value="0.20"></div>
-                    <div class="input-group"><label>Hierro Estribo:</label><input type="text" value='1/4" (6mm)' disabled></div>
+                    <div class="input-group">
+                        <label>Hierro Principal:</label>
+                        <select id="diametro">
+                            <option value='1/2"'>1/2"</option>
+                            <option value='3/8"'>3/8"</option>
+                            <option value='5/8"'>5/8"</option>
+                        </select>
+                    </div>
+                    <div class="input-group"><label>Cant. Varillas:</label><input type="number" id="varillasCant" placeholder="4"></div>
+                </div>
+                <div class="grid-inputs">
+                    <div class="input-group">
+                        <label>Hierro Estribo:</label>
+                        <select id="diametroEstribo">
+                            <option value='1/4"'>1/4"</option>
+                            <option value='3/8"'>3/8"</option>
+                        </select>
+                    </div>
+                    <div class="input-group"><label>Separación (m):</label><input type="number" id="separacion" step="0.01" placeholder="0.15"></div>
                 </div>
             </div>
-
-            <div id="seccionSeparacion" style="display:none;">
-                <div class="input-group"><label>Separación Malla (m):</label><input type="number" id="separacionMalla" step="0.01" value="0.15"></div>
-            </div>
-
-            <div class="actions">
-                <button onclick="calcular()" class="btn-main">VER CÁLCULO</button>
-                <button onclick="limpiarProyecto()" class="btn-alt">Reiniciar Obra</button>
-            </div>
+            <button class="btn-main" onclick="calcular()">+ Añadir al Pedido</button>
         </main>
 
-        <div id="contenedor-reporte"></div>
-
-        <div id="btn-container" style="display: none; margin-top: 20px;">
-            <button onclick="enviarWhatsApp()" class="btn-whatsapp">📲 ENVIAR POR WHATSAPP</button>
-        </div>
+        <div id="historial-categorias"></div>
+        <div id="contenedor-consolidado"></div>
     </div>
     <script src="app.js"></script>
 </body>
