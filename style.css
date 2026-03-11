@@ -1,4 +1,3 @@
-/* --- VARIABLES ÚNICAS --- */
 :root {
     --primario: #27ae60;
     --secundario: #2c3e50;
@@ -7,10 +6,9 @@
     --peligro: #e74c3c;
 }
 
-/* --- ESTILOS BASE --- */
 body { 
     background-color: var(--bg); 
-    font-family: 'Segoe UI', sans-serif; 
+    font-family: 'Segoe UI', Tahoma, sans-serif; 
     padding: 15px; 
     display: flex; 
     justify-content: center; 
@@ -19,7 +17,6 @@ body {
 
 .container { width: 100%; max-width: 500px; }
 
-/* --- ENCABEZADO Y TARJETA --- */
 header { 
     background: var(--secundario); 
     color: white; 
@@ -37,54 +34,43 @@ header h1 { margin: 0; font-size: 1.6rem; }
     margin-bottom: 20px; 
 }
 
-/* --- INPUTS --- */
 .input-group { margin-bottom: 15px; }
 label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.85rem; color: var(--secundario); }
 input, select { 
     width: 100%; padding: 12px; border: 2px solid #dfe6e9; 
     border-radius: 8px; box-sizing: border-box; font-size: 1rem; 
+    transition: border-color 0.3s;
 }
+input:focus { outline: none; border-color: var(--primario); }
+
 .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
 
-/* --- BOTONES --- */
 .btn-main { 
     background: var(--primario); color: white; padding: 16px; border: none; 
     border-radius: 10px; width: 100%; font-weight: bold; font-size: 1.1rem; cursor: pointer; 
 }
-
-/* --- HISTORIAL (ESTE ES EL QUE NO SE VEÍA) --- */
-#historial-categorias { margin-top: 20px; }
+.btn-main:active { transform: scale(0.98); background: #219150; }
 
 .item-calculado { 
-    background: white; 
-    border: 1px solid #ddd; /* BORDE GRIS */
-    border-left: 6px solid var(--primario); /* BORDE VERDE GRUESO */
-    padding: 15px; 
-    margin-bottom: 12px; 
-    border-radius: 8px; 
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    position: relative; 
-    font-size: 0.9rem;
+    background: white; border: 1px solid #ddd; border-left: 6px solid var(--primario); 
+    padding: 15px; margin-bottom: 12px; border-radius: 8px; position: relative; 
+    animation: aparecer 0.3s ease-out;
 }
-
-.item-calculado h4 { margin: 0 0 5px 0; color: var(--secundario); text-transform: uppercase; }
+@keyframes aparecer { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .btn-borrar-item { 
-    position: absolute; top: 10px; right: 10px; 
-    background: var(--peligro); color: white; border: none; 
-    border-radius: 50%; width: 26px; height: 26px; cursor: pointer; 
-    font-weight: bold; line-height: 1;
+    position: absolute; top: 10px; right: 10px; background: var(--peligro); 
+    color: white; border: none; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; 
 }
 
-/* --- CONSOLIDADO --- */
 .reporte-consolidado { 
-    margin-top: 25px; background: var(--secundario); color: white; 
-    border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-top: 25px; background: var(--secundario); color: white; border-radius: 12px; overflow: hidden; 
 }
 .reporte-consolidado h3 { margin: 0; padding: 15px; text-align: center; background: #1a252f; }
 
 .tabla-final { width: 100%; border-collapse: collapse; background: white; color: #333; }
 .tabla-final td { padding: 12px; border-bottom: 1px solid #eee; }
 .tabla-final td:last-child { text-align: right; font-weight: bold; color: var(--primario); }
+
 .btn-whatsapp { background: #25D366; color: white; width: 100%; padding: 15px; border: none; font-weight: bold; cursor: pointer; }

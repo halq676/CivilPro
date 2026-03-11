@@ -3,81 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CivilPro v1.0</title>
-     <link rel="manifest" href="manifest.json">
+    <title>CivilPro - Cálculo de Materiales</title>
+    
     <meta name="theme-color" content="#27ae60">
     <link rel="icon" type="image/png" sizes="192x192" href="icono-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icono-512.png">
     <link rel="apple-touch-icon" href="icono-192.png">
-    <link rel="stylesheet" href="style.css">
-    
+
+    <link rel="stylesheet" href="style.css?v=2.7">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🏗️ CivilPro</h1>
+            <h1>🏗️ CIVILPRO</h1>
             <p>Cálculo de Materiales</p>
         </header>
-
         <main class="card">
             <div class="input-group">
                 <label>Elemento:</label>
                 <select id="tipoElemento" onchange="adaptarFormulario()">
                     <option value="Columna">Columna</option>
                     <option value="Viga">Viga</option>
-                    <option value="Losa">Losa / Placa</option>
+                    <option value="Losa">Losa (Torta)</option>
                     <option value="Zapata">Zapata</option>
-                    <option value="Pared">Muro / Pared</option>
+                    <option value="Pared">Muro (Ladrillo + Pega)</option>
+                    <option value="Repello">Repello / Pañete</option>
                 </select>
             </div>
 
             <div id="grupo-ladrillo" class="input-group" style="display:none;">
                 <label>Clase de Ladrillo:</label>
                 <select id="claseLadrillo">
-                    <option value="farol">Ladrillo Farol (16/m2)</option>
-                    <option value="solido">Ladrillo Sólido (38/m2)</option>
+                    <option value="farol">Ladrillo Farol</option>
+                    <option value="solido">Ladrillo Sólido</option>
                 </select>
             </div>
 
             <div class="grid-inputs">
-                <div class="input-group"><label id="labelLargo">Largo (m):</label><input type="number" id="largo" step="0.01"></div>
-                <div class="input-group" id="contenedor-ancho"><label id="labelAncho">Ancho (m):</label><input type="number" id="ancho" step="0.01"></div>
-                <div class="input-group"><label id="labelAlto">Alto (m):</label><input type="number" id="alto" step="0.01"></div>
-                <div class="input-group"><label>Cantidad:</label><input type="number" id="cantidad" value="1"></div>
+                <div class="input-group">
+                    <label id="lblLargo">Largo/Alto (m):</label>
+                    <input type="number" id="largo" step="0.01">
+                </div>
+                <div class="input-group" id="contenedor-ancho">
+                    <label id="lblAncho">Ancho (m):</label>
+                    <input type="number" id="ancho" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label id="lblAlto">Espesor/Base (m):</label>
+                    <input type="number" id="alto" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Cantidad:</label>
+                    <input type="number" id="cantidad" value="1">
+                </div>
             </div>
 
             <div id="seccion-hierro">
                 <hr>
                 <div class="grid-inputs">
                     <div class="input-group">
-                        <label>Hierro Principal:</label>
+                        <label>Varilla Principal:</label>
                         <select id="diametro">
                             <option value='1/2"'>1/2"</option>
                             <option value='3/8"'>3/8"</option>
                             <option value='5/8"'>5/8"</option>
                         </select>
                     </div>
-                    <div class="input-group"><label>Cant. Varillas:</label><input type="number" id="varillasCant" placeholder="4"></div>
+                    <div class="input-group">
+                        <label># Varillas:</label>
+                        <input type="number" id="varillasCant" placeholder="Ej: 4">
+                    </div>
                 </div>
                 <div class="grid-inputs">
                     <div class="input-group">
-                        <label>Hierro Estribo:</label>
+                        <label>Varilla Estribo:</label>
                         <select id="diametroEstribo">
                             <option value='1/4"'>1/4"</option>
                             <option value='3/8"'>3/8"</option>
                         </select>
                     </div>
-                    <div class="input-group"><label>Separación (m):</label><input type="number" id="separacion" step="0.01" placeholder="0.15"></div>
+                    <div class="input-group">
+                        <label>Distancia (m):</label>
+                        <input type="number" id="separacion" step="0.01" placeholder="0.15">
+                    </div>
                 </div>
             </div>
+
             <button class="btn-main" onclick="calcular()">+ Añadir al Pedido</button>
         </main>
 
         <div id="historial-categorias"></div>
         <div id="contenedor-consolidado"></div>
     </div>
-    
-    <script src="app.js?v=2"></script>
+    <script src="app.js?v=2.7"></script>
 </body>
 </html>
-
