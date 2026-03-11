@@ -1,4 +1,5 @@
-let listaCalculos = [];
+// 1. CARGA INICIAL: Lee de la memoria o inicia vacío
+let listaCalculos = JSON.parse(localStorage.getItem('civilPro_data')) || [];
 const PESOS_HIERRO = { '1/4"': 0.25, '3/8"': 0.56, '1/2"': 0.99, '5/8"': 1.55 };
 
 function adaptarFormulario() {
@@ -67,14 +68,12 @@ function calcular() {
         item.arena = parseFloat((vol * 0.52).toFixed(2));
         item.piedra = parseFloat((vol * 0.65).toFixed(2));
 
-        // Hierro Principal
         const dP = document.getElementById('diametro').value;
         const nP = parseFloat(document.getElementById('varillasCant').value) || 0;
         const metrosP = L * nP * cant;
         item.hierros[dP] = Math.ceil(metrosP / 6);
         item.pesos[dP] = parseFloat((metrosP * PESOS_HIERRO[dP]).toFixed(2));
 
-        // Estribos
         const dE = document.getElementById('diametroEstribo').value;
         const sep = parseFloat(document.getElementById('separacion').value) || 0;
         if (sep > 0) {
@@ -122,7 +121,6 @@ function renderizarTodo() {
                     ${item.cemento > 0 ? `<br><span style="color:#2980b9"><b>Cem:</b> ${item.cemento} bul | <b>Arena:</b> ${item.arena} m³</span>` : ''}
                     ${item.cantEstribos > 0 ? `<br><span style="color:#27ae60"><b>Estribos:</b> ${item.cantEstribos} de ${item.diamEstribo}</span>` : ''}
                     ${Object.keys(item.hierros).filter(d => d !== item.diamEstribo).map(d => `<br><b>Hierro ${d}:</b> ${item.hierros[d]}v (${item.pesos[d]}kg)`).join('')}
-                    ${Object.keys(item.hierros).length === 0 && item.ladrillos === 0 && item.cemento > 0 ? '' : ''}
                 </div>
             </div>`;
     });
@@ -146,20 +144,23 @@ function renderizarTodo() {
                     ${total.ladrillos > 0 ? `<tr style="background:#fff9c4"><td><b>Ladrillos Totales</b></td><td><b>${total.ladrillos} und</b></td></tr>` : ''}
                 </table>
                 <button class="btn-whatsapp" onclick="enviarWA()">Enviar Pedido WhatsApp</button>
+                <button onclick="nuevaObra()" style="background:#e74c3c; color:white; border:none; padding:10px; margin-top:10px; border-radius:5px; width:100%; cursor:pointer;">Limpiar Todo / Nueva Obra</button>
             </div>`;
     } else {
         consolidadoDiv.innerHTML = "";
     }
+
+    // ACTUALIZACIÓN: Esta línea es la que guarda físicamente en el navegador
+    localStorage.setItem('civilPro_data', JSON.stringify(listaCalculos));
 }
+
 function enviarWA() {
     if (listaCalculos.length === 0) {
         alert("No hay materiales para enviar.");
         return;
     }
 
-    // 1. Calculamos los totales exactos para el mensaje
     let total = { cemento: 0, arena: 0, piedra: 0, alambre: 0, ladrillos: 0, hierros: {}, pesos: {}, totalEstribos: 0 };
-    
     listaCalculos.forEach(item => {
         total.cemento += item.cemento;
         total.arena += item.arena;
@@ -167,44 +168,47 @@ function enviarWA() {
         total.alambre += item.alambre;
         total.ladrillos += item.ladrillos;
         total.totalEstribos += (item.cantEstribos || 0);
-        
         for(let d in item.hierros) {
             total.hierros[d] = (total.hierros[d] || 0) + item.hierros[d];
             total.pesos[d] = (total.pesos[d] || 0) + item.pesos[d];
         }
     });
 
-    // 2. Construcción del Mensaje (con los totales que querías)
     let msj = "*🏗️ PEDIDO MATERIALES - CIVILPRO*%0A";
     msj += "==============================%0A";
     msj += "*📦 TOTALES A PEDIR:*%0A";
     msj += `• Cemento Gris: *${total.cemento} bultos*%0A`;
     msj += `• Arena: *${total.arena.toFixed(2)} m³*%0A`;
-    
     if (total.piedra > 0) msj += `• Piedra/Triturado: *${total.piedra.toFixed(2)} m³*%0A`;
     if (total.ladrillos > 0) msj += `• Ladrillos Totales: *${total.ladrillos} und*%0A`;
-    
     for (let d in total.hierros) {
         msj += `• Hierro de ${d}: *${total.hierros[d]} varillas* (${total.pesos[d].toFixed(1)}kg)%0A`;
     }
-    
     if (total.totalEstribos > 0) msj += `• Total Estribos: *${total.totalEstribos} piezas*%0A`;
     if (total.alambre > 0) msj += `• Alambre Negro: *${total.alambre.toFixed(1)} kg*%0A`;
 
     msj += "==============================%0A";
     msj += "*📋 DETALLE DE OBRA:*%0A";
-    listaCalculos.forEach(i => {
-        msj += `- ${i.nombre}%0A`;
-    });
+    listaCalculos.forEach(i => { msj += `- ${i.nombre}%0A`; });
 
-    // 3. Abrir WhatsApp
-    const url = `https://wa.me/?text=${msj}`;
-    window.open(url, '_blank');
+    window.open(`https://wa.me/?text=${msj}`, '_blank');
 }
+
 function eliminarItem(id) {
     listaCalculos = listaCalculos.filter(i => i.id !== id);
     renderizarTodo();
 }
 
+function nuevaObra() {
+    if (confirm("¿Seguro que quieres borrar todos los cálculos para iniciar una nueva obra?")) {
+        listaCalculos = [];
+        localStorage.removeItem('civilPro_data');
+        renderizarTodo();
+    }
+}
 
-window.onload = adaptarFormulario;
+// ACTUALIZACIÓN: Al cargar la página, adaptamos el formulario y dibujamos lo guardado
+window.onload = function() {
+    adaptarFormulario();
+    renderizarTodo(); 
+};
