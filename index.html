@@ -59,35 +59,36 @@
             </div>
 
             <div id="seccion-hierro">
-                <hr>
-                <div class="grid-inputs">
-                    <div class="input-group">
-                        <label>Varilla Principal:</label>
-                        <select id="diametro">
-                            <option value='1/2"'>1/2"</option>
-                            <option value='3/8"'>3/8"</option>
-                            <option value='5/8"'>5/8"</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label># Varillas:</label>
-                        <input type="number" id="varillasCant" placeholder="Ej: 4">
-                    </div>
-                </div>
-                <div class="grid-inputs">
-                    <div class="input-group">
-                        <label>Varilla Estribo:</label>
-                        <select id="diametroEstribo">
-                            <option value='1/4"'>1/4"</option>
-                            <option value='3/8"'>3/8"</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>Distancia (m):</label>
-                        <input type="number" id="separacion" step="0.01" placeholder="0.15">
-                    </div>
-                </div>
-            </div>
+    <hr>
+    <div class="grid-inputs">
+        <div class="input-group">
+            <label>Varilla Principal:</label>
+            <select id="diametro">
+                <option value='1/2"'>1/2"</option>
+                <option value='3/8"'>3/8"</option>
+                <option value='5/8"'>5/8"</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label id="lblVarillas"># Varillas:</label>
+            <input type="number" id="varillasCant" placeholder="Ej: 4">
+        </div>
+    </div>
+    
+    <div class="grid-inputs" id="grupo-diametro-estribo">
+        <div class="input-group" id="contenedor-estribo-select">
+            <label>Varilla Estribo:</label>
+            <select id="diametroEstribo">
+                <option value='1/4"'>1/4"</option>
+                <option value='3/8"'>3/8"</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label id="lblSep">Distancia (m):</label>
+            <input type="number" id="separacion" step="0.01" placeholder="0.15">
+        </div>
+    </div>
+</div>
 
             <button class="btn-main" onclick="calcular()">+ Añadir al Pedido</button>
         </main>
