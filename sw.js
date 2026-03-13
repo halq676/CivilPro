@@ -1,4 +1,4 @@
-const CACHE_NAME = 'civilpro-v1';
+const CACHE_NAME = 'civilpro-v2';
 const assets = [
   './',
   './index.html',
