@@ -6,55 +6,44 @@ function adaptarFormulario() {
     const tipo = document.getElementById('tipoElemento').value;
     const esPared = (tipo === 'Pared');
     const esRepello = (tipo === 'Repello');
-    const esZapata = (tipo === 'Zapata');
+    const esParrilla = (tipo === 'Zapata' || tipo === 'Losa'); // Agrupamos ambos
     
     const lblLargo = document.getElementById('lblLargo');
     const lblAncho = document.getElementById('lblAncho');
     const lblAlto = document.getElementById('lblAlto');
     const seccionHierro = document.getElementById('seccion-hierro');
 
-    // 1. Manejo de dimensiones según el tipo
     if (esPared || esRepello) {
         lblLargo.innerText = "Largo (m):";
         lblAlto.innerText = "Alto (m):";
-        seccionHierro.style.display = 'none'; // Ocultamos hierro en pared/repello
+        seccionHierro.style.display = 'none';
         document.getElementById('contenedor-ancho').style.display = 'none';
         document.getElementById('grupo-ladrillo').style.display = esPared ? 'block' : 'none';
     } else {
-        lblLargo.innerText = esZapata ? "Largo Zapata (m):" : "Largo/Alto (m):";
-        lblAncho.innerText = esZapata ? "Ancho Zapata (m):" : "Ancho (m):";
-        lblAlto.innerText = esZapata ? "Espesor Zapata (m):" : "Espesor/Base (m):";
+        // Para Losa o Zapata usamos términos de área
+        lblLargo.innerText = esParrilla ? "Largo (m):" : "Largo/Alto (m):";
+        lblAncho.innerText = esParrilla ? "Ancho (m):" : "Ancho (m):";
+        lblAlto.innerText = esParrilla ? "Espesor (m):" : "Espesor/Base (m):";
         
         seccionHierro.style.display = 'block';
         document.getElementById('contenedor-ancho').style.display = 'block';
         document.getElementById('grupo-ladrillo').style.display = 'none';
 
-        // 2. Ajuste específico de etiquetas de Hierro para Zapata
         const lblVarillas = document.getElementById('lblVarillas');
         const lblSep = document.getElementById('lblSep');
-        const grupoDiamEstribo = document.getElementById('grupo-diametro-estribo'); // Si tienes este ID
+        const estriboSelect = document.getElementById('contenedor-estribo-select');
 
-        if (esZapata) {
-            // Cambiamos los textos para que el maestro sepa qué ingresar
+        if (esParrilla) {
             lblVarillas.innerText = "Separación varillas X (m):";
             lblSep.innerText = "Separación varillas Y (m):";
-            
-            // Ocultamos SOLO el selector de varilla de estribo
-            const estriboSelect = document.getElementById('contenedor-estribo-select');
             if(estriboSelect) estriboSelect.style.display = 'none'; 
-            
         } else {
-            // Volvemos a los textos normales para Vigas/Columnas
             lblVarillas.innerText = "Cant. Varillas principales:";
             lblSep.innerText = "Separación Estribos (m):";
-            
-            // Mostramos de nuevo el selector de varilla de estribo
-            const estriboSelect = document.getElementById('contenedor-estribo-select');
             if(estriboSelect) estriboSelect.style.display = 'block';
         }
     }
 }
-
 function calcular() {
     const tipo = document.getElementById('tipoElemento').value;
     const cant = parseFloat(document.getElementById('cantidad').value) || 0;
@@ -96,7 +85,7 @@ function calcular() {
         item.nombre = `Repello (${area.toFixed(1)} m²)`;
         item.agua = Math.round(item.cemento * 18);
 
-    } else if (tipo === 'Zapata') {
+    } else if (tipo === 'Zapata' || tipo === 'Losa') {
         // CÁLCULO DE ZAPATA (NUEVO)
         const vol = L * A * H * cant;
         item.cemento = Math.ceil(vol * 8.5); 
@@ -116,8 +105,7 @@ function calcular() {
         item.hierros[dP] = Math.ceil(metrosParrilla / 6);
         item.pesos[dP] = parseFloat((metrosParrilla * PESOS_HIERRO[dP]).toFixed(2));
         item.alambre = parseFloat((metrosParrilla * 0.05).toFixed(1));
-        item.nombre = `Zapata (${L}x${A}x${H}m)`;
-
+        item.nombre = `${tipo} (${L}x${A}x${H}m)`;
     } else {
         // CÁLCULO DE VIGAS Y COLUMNAS
         const vol = L * A * H * cant;
