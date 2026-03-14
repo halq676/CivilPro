@@ -1,9 +1,9 @@
-const CACHE_NAME = 'civilpro-v3';
+const CACHE_NAME = 'civilpro-v4';
 const assets = [
-  './',
   'index.html',
   'style.css',
   'app.js',
+  'manifest.json', // ¡Asegúrate de incluir este!
   'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
 ];
 

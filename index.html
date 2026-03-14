@@ -97,5 +97,19 @@
         <div id="contenedor-consolidado"></div>
     </div>
     <script src="app.js?v=2.7"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // Registramos el archivo sw.js
+          navigator.serviceWorker.register('./sw.js', { scope: './' })
+            .then(reg => {
+              console.log('¡CivilPro listo para usar sin internet!', reg);
+            })
+            .catch(err => {
+              console.error('Error registrando el modo offline:', err);
+            });
+        });
+      }
+    </script>
 </body>
 </html>
