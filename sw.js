@@ -30,15 +30,28 @@ self.addEventListener('activate', event => {
   self.clients.claim(); // Toma el control de la página inmediatamente
 });
 
-// 3. Responder cuando no hay internet
+// 3. ESTRATEGIA: PRIORIZAR CACHÉ (Cache First)
+// Esto garantiza que la app cargue aunque pasen días sin internet
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(response => {
-      // Si está en caché, lo devuelve. Si no, intenta ir a internet.
-      return response || fetch(event.request);
-    }).catch(() => {
-        // Si fallan ambos (ej: archivo no en caché y sin red), puedes devolver index.html
-        return caches.match('index.html');
+      // Si el archivo está en caché, lo entregamos de inmediato
+      if (response) {
+        return response;
+      }
+
+      // Si no está en caché, intentamos traerlo de internet
+      return fetch(event.request).then(networkResponse => {
+        // Opcional: Podrías guardar archivos nuevos aquí, 
+        // pero por ahora solo los devolvemos
+        return networkResponse;
+      }).catch(() => {
+        // FALLBACK: Si falla internet y no está en caché, 
+        // enviamos el index.html para que la app no se quede en blanco
+        if (event.request.mode === 'navigate') {
+          return caches.match('./index.html') || caches.match('index.html');
+        }
+      });
     })
   );
 });
